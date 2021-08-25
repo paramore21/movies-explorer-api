@@ -1,9 +1,10 @@
-const router = require('express').Router()
+const router = require('express').Router();
+const { getMovies, createMovie, deleteMovie } = require('../controllers/movies');
 
-router.get('/movies', );
+router.get('/movies', getMovies);
 
-router.post('/movies', );
+router.post('/movies', createMovie);
 
-router.delete('/movies/movieId', );
+router.delete('/movies/movieId', deleteMovie);
 
 module.exports = router;

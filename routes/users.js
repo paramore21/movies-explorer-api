@@ -1,7 +1,8 @@
-const router = require('express').Router()
+const router = require('express').Router();
+const { getUser, updateUser } = require('../controllers/users');
 
-router.get('/users/me', );
+router.get('/users/me', getUser);
 
-router.patch('/users/me', );
+router.patch('/users/me', updateUser);
 
 mpdule.exports = router;
