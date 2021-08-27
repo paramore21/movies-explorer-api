@@ -1,4 +1,4 @@
-const {isEmail} = require('validator');
+const { isEmail } = require('validator');
 const mongoose = require('mongoose');
 
 const userSchema = new mongoose.Schema({
@@ -7,21 +7,21 @@ const userSchema = new mongoose.Schema({
     unique: true,
     validate: {
       validator: (v) => isEmail(v, { require_protocol: true }),
-      message: 'Неверный формат ссылки'
+      message: 'Неверный формат ссылки',
     },
   },
   password: {
     type: String,
     required: true,
-    select: false
+    select: false,
   },
   name: {
     type: String,
     required: true,
     minlength: 2,
     maxlength: 30,
-    deafult: "Ильнура"
-  }
+    deafult: 'Ильнура',
+  },
 });
 
 module.exports = mongoose.module('user', userSchema);
