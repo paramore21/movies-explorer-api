@@ -1,15 +1,19 @@
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const User = require('../models/user');
+const BadRequest = require('../errors/bad-request');
+const Conflict = require('../errors/conflict');
+const NoAuth = require('../errors/no-auth');
+const NotFound = require('../errors/not-found');
 
-module.exports.authorization = (req, res, next) => {
+const { JWT_SECRET = 'DEFAULT_JWT_SECRET' } = process.env;
+
+module.exports.register = (req, res, next) => {
   const { email, name, password } = req.body;
 
   User.findOne({ email }).then((findedUser) => {
     if (findedUser) {
-      res.status(409).send({
-        message: 'Пользователь уже существует',
-      });
+      throw new Conflict('Пользователь уже существует');
     }
   });
 
@@ -17,7 +21,7 @@ module.exports.authorization = (req, res, next) => {
     User.create({ name, email, password: hash })
       .then((user) => {
         if (!user) {
-          next();
+          next(new BadRequest('Пользователь не найден'));
         }
         res.send({ _id: user._id });
       })
@@ -28,11 +32,11 @@ module.exports.authorization = (req, res, next) => {
 module.exports.getUser = (req, res, next) => {
   User.findById(req.body._id)
     .orFail(() => {
-      throw new Error();
+      throw new NotFound('Пользователь по указанному id не найден');
     })
     .then((user) => {
       if (!user) {
-        throw new Error();
+        throw new BadRequest('Произошла ошибка');
       }
       res.send(user);
     })
@@ -44,11 +48,11 @@ module.exports.updateUser = (req, res, next) => {
   const { email, name } = req.body;
   User.findByIdAndUpdate(userId, { name, email }, { new: true, runValidators: true })
     .orFail(() => {
-      throw new Error();
+      throw new NotFound('Пользователь не найден');
     })
     .then((user) => {
       if (!user) {
-        throw new Error();
+        throw new BadRequest('Неверные данные');
       }
       res.send({ data: user });
     })
@@ -59,17 +63,17 @@ module.exports.login = (req, res, next) => {
   const { email, password } = req.body;
 
   if (!email || !password) {
-    throw new Error();
+    throw new NotFound('Пользователь не найден');
   }
   User.findOne({ email }).select('+password')
     .orFail(() => {
-      throw new Error();
+      throw new NoAuth('Неверная почта или пароль');
     })
     .then((user) => {
       bcrypt.compare(password, user.password)
         .then((matched) => {
           if (!matched) {
-            throw new Error();
+            throw new NoAuth('Неверная почта или пароль');
           }
           const token = jwt.sign({ _id: user._id }, JWT_SECRET, { expiresIn: '7d' });
           res.send({ token });

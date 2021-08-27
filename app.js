@@ -1,7 +1,11 @@
-const express = require('express')
-const mongoose = require('mongoose')
+require('dotenv').config();
+const express = require('express');
+const mongoose = require('mongoose');
+const bodyParser = require('body-parser');
+const { errors, celebrate, Joi } = require('celebrate');
+const { isURL } = require('validator');
 
-const app = express()
+const app = express();
 
 mongoose.connect('mongodb://localhost:27017/diplomadb', {
   useNewUrlParser: true,
@@ -10,4 +14,4 @@ mongoose.connect('mongodb://localhost:27017/diplomadb', {
   useUnifiedTopology: true,
 });
 
-app.listen(3000); 
+app.listen(3000);
