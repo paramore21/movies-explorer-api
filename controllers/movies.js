@@ -5,22 +5,37 @@ const NotFound = require('../errors/not-found');
 
 module.exports.getMovies = (req, res, next) => {
   Movie.find({})
-  .then((movies) => { res.send({data: movies}) })
-  .cath(next)
-}
+    .then((movies) => { res.send({ data: movies }); })
+    .catch(next);
+};
 
 module.exports.createMovie = (req, res, next) => {
-  const { country, director, duration, year, description, image, trailer, nameRU, nameEN, thumbnail, movieId } = req.body;
+  const {
+    country, director, duration, year, description, image,
+    trailer, nameRU, nameEN, thumbnail, movieId,
+  } = req.body;
 
-  Movie.create({ country, director, duration, year, description, image, trailer, nameRU, nameEN,
-    thumbnail, movieId, owner: req.user._id })
-  .then((movie) => {
-    if (!movie) {
-      throw new BadRequest('Ошибка валидации');
-    }
-    res.send({ data: movie });
+  Movie.create({
+    country,
+    director,
+    duration,
+    year,
+    description,
+    image,
+    trailer,
+    nameRU,
+    nameEN,
+    thumbnail,
+    movieId,
+    owner: req.user._id,
   })
-  .catch((err) => { next(err); })
+    .then((movie) => {
+      if (!movie) {
+        throw new BadRequest('Ошибка валидации');
+      }
+      res.send({ data: movie });
+    })
+    .catch((err) => { next(err); });
 };
 
 module.exports.deleteMovie = (req, res, next) => {
@@ -28,18 +43,18 @@ module.exports.deleteMovie = (req, res, next) => {
   const ownerId = req.user._id;
 
   Movie.findById(movieId)
-  .orFail(() => {
-    throw new NotFound('Карточка по данному id не найдена');
-  })
-  .then((movie) => {
-    if (ownerId.toString() === movie.owner._id.toString()) {
-      Movie.deleteOne(movie)
-      .then(() => {
-        res.send({data: movie})
-      })
-    } else {
-      throw new Forbidden('Недостаточно прав');
-    }
-  })
-  .catch((err) => { next(err) });
+    .orFail(() => {
+      throw new NotFound('Карточка по данному id не найдена');
+    })
+    .then((movie) => {
+      if (ownerId.toString() === movie.owner._id.toString()) {
+        Movie.deleteOne(movie)
+          .then(() => {
+            res.send({ data: movie });
+          });
+      } else {
+        throw new Forbidden('Недостаточно прав');
+      }
+    })
+    .catch((err) => { next(err); });
 };

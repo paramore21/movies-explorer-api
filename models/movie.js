@@ -1,4 +1,4 @@
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
 
 const movieSchema = new mongoose.Schema({
   country: {
@@ -50,7 +50,7 @@ const movieSchema = new mongoose.Schema({
   nameEN: {
     type: String,
     required: true,
-  }
+  },
 });
 
 module.export = mongoose.Schema('movie', movieSchema);
