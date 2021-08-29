@@ -30,7 +30,7 @@ module.exports.register = (req, res, next) => {
 };
 
 module.exports.getUser = (req, res, next) => {
-  User.findById(req.body._id)
+  User.findById(req.user._id)
     .orFail(() => {
       throw new NotFound('Пользователь по указанному id не найден');
     })
