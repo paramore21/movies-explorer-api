@@ -22,6 +22,8 @@ mongoose.connect(DATA_BASE, {
 });
 
 const allowedCors = [
+  'http://movies-diploma.nomoredomains.rocks',
+  'http://api.movies-diploma.nomoredomains.rocks',
   'http://localhost:3000',
 ];
 
