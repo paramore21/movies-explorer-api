@@ -51,7 +51,8 @@ module.exports.deleteMovie = (req, res, next) => {
         Movie.deleteOne(movie)
           .then(() => {
             res.send({ data: movie });
-          });
+          })
+          .catch((err) => { next(err); });
       } else {
         throw new Forbidden('Недостаточно прав');
       }

@@ -13,20 +13,21 @@ module.exports.register = (req, res, next) => {
 
   User.findOne({ email }).then((findedUser) => {
     if (findedUser) {
-      throw new Conflict('Пользователь уже существует');
+      next(new Conflict('Пользователь уже существует'));
+    } else {
+      bcrypt.hash(password, 10).then((hash) => {
+        User.create({ name, email, password: hash })
+          .then((user) => {
+            if (!user) {
+              next(new BadRequest('Пользователь не найден'));
+            }
+            res.send({ _id: user._id });
+          })
+          .catch((err) => { next(err); });
+      });
     }
-  });
-
-  bcrypt.hash(password, 10).then((hash) => {
-    User.create({ name, email, password: hash })
-      .then((user) => {
-        if (!user) {
-          next(new BadRequest('Пользователь не найден'));
-        }
-        res.send({ _id: user._id });
-      })
-      .catch((err) => { next(err); });
-  });
+  })
+    .catch((err) => { next(err); });
 };
 
 module.exports.getUser = (req, res, next) => {

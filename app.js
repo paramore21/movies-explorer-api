@@ -3,8 +3,6 @@ const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const { errors, celebrate, Joi } = require('celebrate');
-const auth = require('./middlewares/auth');
-const NotFound = require('./errors/not-found');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 
 const { PORT = 3000 } = process.env;
@@ -47,43 +45,7 @@ app.use((req, res, next) => {
 
   next();
 });
-
-const { login, register } = require('./controllers/users');
-
 app.use(requestLogger);
-
-app.post(
-  '/signup',
-  celebrate({
-    body: Joi.object().keys({
-      email: Joi.string().required().email(),
-      password: Joi.string().required().min(8),
-      name: Joi.string().min(2).max(30),
-    }),
-  }),
-  register,
-);
-
-app.post(
-  '/signin',
-  celebrate({
-    body: Joi.object().keys({
-      email: Joi.string().required().email(),
-      password: Joi.string().required().min(8),
-    }),
-  }),
-  login,
-);
-
-app.use(auth);
-
-app.use('/users', require('./routes/users'));
-
-app.use('/movies', require('./routes/movies'));
-
-app.use('*', (req, res, next) => {
-  next(new NotFound('Страница не найдена'));
-});
 
 app.use(errorLogger);
 app.use(errors());
