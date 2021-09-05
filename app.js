@@ -7,12 +7,14 @@ const helmet = require('helmet');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 const router = require('./routes/index');
 const error = require('./middlewares/error');
+const { limiter } = require('./utils/rateLimiter');
 
 const {
   PORT = 3000,
   DATA_BASE = 'mongodb://localhost:27017/moviesdb',
 } = process.env;
 const app = express();
+app.use(limiter());
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -23,14 +25,6 @@ mongoose.connect(DATA_BASE, {
   useFindAndModify: false,
   useUnifiedTopology: true,
 });
-
-const allowedCors = [
-  'http://movies-diploma.nomoredomains.rocks',
-  'https://movies-diploma.nomoredomains.rocks',
-  'http://api.movies-diploma.nomoredomains.rocks',
-  'https://api.movies-diploma.nomoredomains.rocks',
-  'http://localhost:3000',
-];
 
 app.use(helmet());
 
