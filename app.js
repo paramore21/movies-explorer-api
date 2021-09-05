@@ -14,7 +14,7 @@ const {
   DATA_BASE = 'mongodb://localhost:27017/moviesdb',
 } = process.env;
 const app = express();
-app.use(limiter());
+app.use(limiter);
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
