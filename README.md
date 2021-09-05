@@ -9,5 +9,5 @@
 Данный репозиторий отвечает за разработку бекенда.
 
 ### Публичный ip - :link:[84.201.167.97](84.201.167.97)
-### Публичный домен для api-запросов :link:[https://movies-diploma.nomoredomains.rocks/](https://movies-diploma.nomoredomains.rocks/)
+### Публичный домен для api-запросов :link:[https://api.movies-diploma.nomoredomains.rocks/](https://api.movies-diploma.nomoredomains.rocks/)
 
