@@ -1,5 +1,6 @@
-const { isEmail } = require('validator');
 const mongoose = require('mongoose');
+const { isEmail } = require('validator');
+const { wrongLinkMessage } = require('../utils/errorsText');
 
 const userSchema = new mongoose.Schema({
   email: {
@@ -7,7 +8,7 @@ const userSchema = new mongoose.Schema({
     unique: true,
     validate: {
       validator: (v) => isEmail(v, { require_protocol: true }),
-      message: 'Неверный формат ссылки',
+      message: wrongLinkMessage,
     },
   },
   password: {

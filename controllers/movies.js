@@ -2,6 +2,7 @@ const Movie = require('../models/movie');
 const BadRequest = require('../errors/bad-request');
 const Forbidden = require('../errors/forbidden');
 const NotFound = require('../errors/not-found');
+const { badRequestMessage, forbiddenMessage, notFoundMovieMessage } = require('../utils/errorsText');
 
 module.exports.getMovies = (req, res, next) => {
   Movie.find({})
@@ -31,7 +32,7 @@ module.exports.createMovie = (req, res, next) => {
   })
     .then((movie) => {
       if (!movie) {
-        throw new BadRequest('Ошибка валидации');
+        throw new BadRequest(badRequestMessage);
       }
       res.send({ data: movie });
     })
@@ -44,7 +45,7 @@ module.exports.deleteMovie = (req, res, next) => {
 
   Movie.findById(movieId)
     .orFail(() => {
-      throw new NotFound('Карточка по данному id не найдена');
+      throw new NotFound(notFoundMovieMessage);
     })
     .then((movie) => {
       if (ownerId.toString() === movie.owner._id.toString()) {
@@ -54,7 +55,7 @@ module.exports.deleteMovie = (req, res, next) => {
           })
           .catch((err) => { next(err); });
       } else {
-        throw new Forbidden('Недостаточно прав');
+        throw new Forbidden(forbiddenMessage);
       }
     })
     .catch((err) => { next(err); });

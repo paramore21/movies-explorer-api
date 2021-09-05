@@ -1,11 +1,11 @@
 const router = require('express').Router();
-const { Joi, celebrate } = require('celebrate');
+const { createMovieValidation, deleteMovieById } = require('../middlewares/validate');
 const { getMovies, createMovie, deleteMovie } = require('../controllers/movies');
 
 router.get('/', getMovies);
 
-router.post('/', , createMovie);
+router.post('/', createMovieValidation, createMovie);
 
-router.delete('/:movieId', , deleteMovie);
+router.delete('/:movieId', deleteMovieById, deleteMovie);
 
 module.exports = router;
