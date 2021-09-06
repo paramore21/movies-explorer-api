@@ -6,7 +6,7 @@ const Conflict = require('../errors/conflict');
 const NoAuth = require('../errors/no-auth');
 const NotFound = require('../errors/not-found');
 const {
-  conflictMessage, badRequestMessage, noAuthMessage, userNotFoundMessage,
+  conflictMessage, badRequestMessage, userNotFoundMessage, badAuthMessage,
 } = require('../utils/errorsText');
 
 const { JWT_SECRET = 'DEFAULT_JWT_SECRET' } = process.env;
@@ -18,19 +18,21 @@ module.exports.register = (req, res, next) => {
     if (findedUser) {
       next(new Conflict(conflictMessage));
     } else {
-      bcrypt.hash(password, 10).then((hash) => {
-        if (!email || !password || !name) {
-          next(new BadRequest(badRequestMessage));
-        }
-        User.create({ name, email, password: hash })
-          .then((user) => {
-            if (!user) {
-              next(new NotFound(userNotFoundMessage));
-            }
-            res.send({ _id: user._id });
-          })
-          .catch((err) => { next(err); });
-      });
+      bcrypt.hash(password, 10)
+        .then((hash) => {
+          if (!email || !password || !name) {
+            next(new BadRequest(badRequestMessage));
+          }
+          User.create({ name, email, password: hash })
+            .then((user) => {
+              if (!user) {
+                next(new NotFound(userNotFoundMessage));
+              }
+              res.send({ _id: user._id });
+            })
+            .catch((err) => { next(err); });
+        })
+        .catch(next);
     }
   })
     .catch((err) => { next(err); });
@@ -83,13 +85,13 @@ module.exports.login = (req, res, next) => {
   }
   User.findOne({ email }).select('+password')
     .orFail(() => {
-      throw new NoAuth(noAuthMessage);
+      throw new NoAuth(badAuthMessage);
     })
     .then((user) => {
       bcrypt.compare(password, user.password)
         .then((matched) => {
           if (!matched) {
-            throw new NoAuth(noAuthMessage);
+            throw new NoAuth(badAuthMessage);
           }
           const token = jwt.sign({ _id: user._id }, JWT_SECRET, { expiresIn: '7d' });
           res.send({ token });
