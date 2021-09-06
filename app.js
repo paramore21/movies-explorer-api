@@ -8,11 +8,8 @@ const { requestLogger, errorLogger } = require('./middlewares/logger');
 const router = require('./routes/index');
 const error = require('./middlewares/error');
 const { limiter } = require('./utils/rateLimiter');
+const { PORT, DATA_BASE } = require('./utils/config');
 
-const {
-  PORT = 3000,
-  DATA_BASE = 'mongodb://localhost:27017/moviesdb',
-} = process.env;
 const app = express();
 app.use(limiter);
 

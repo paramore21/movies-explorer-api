@@ -9,7 +9,7 @@ const {
   conflictMessage, badRequestMessage, userNotFoundMessage, badAuthMessage,
 } = require('../utils/errorsText');
 
-const { JWT_SECRET = 'DEFAULT_JWT_SECRET' } = process.env;
+const { JWT_SECRET } = require('../utils/config');
 
 module.exports.register = (req, res, next) => {
   const { email, name, password } = req.body;
@@ -84,9 +84,7 @@ module.exports.login = (req, res, next) => {
     throw new NotFound(userNotFoundMessage);
   }
   User.findOne({ email }).select('+password')
-    .orFail(() => {
-      throw new NoAuth(badAuthMessage);
-    })
+    .orFail(new BadRequest(badAuthMessage))
     .then((user) => {
       bcrypt.compare(password, user.password)
         .then((matched) => {
