@@ -1,0 +1,10 @@
+module.exports.badRequestMessage = 'Неверные данные';
+module.exports.notFoundMovieMessage = 'Фильм по данному id не найден';
+module.exports.forbiddenMessage = 'Недостаточно прав';
+module.exports.conflictMessage = 'Пользователь уже существует';
+module.exports.userNotFoundMessage = 'Пользователь не найден';
+module.exports.badAuthMessage = 'Неверная почта или пароль';
+module.exports.noAuthMessage = 'Необходима авторизация';
+module.exports.defaultMessage = 'Ошибка по умолчанию';
+module.exports.wrongLinkMessage = 'Неверный формат ссылки';
+module.exports.pageNotFoundMessage = 'Страница не найдена';
