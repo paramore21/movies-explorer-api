@@ -56,23 +56,15 @@ module.exports.updateUser = (req, res, next) => {
   const userId = req.user._id;
   const { email, name } = req.body;
 
-  User.findOne({ email })
-    .then((findedUser) => {
-      if (findedUser) {
-        next(new Conflict(conflictMessage));
-      } else {
-        User.findByIdAndUpdate(userId, { name, email }, { new: true, runValidators: true })
-          .orFail(() => {
-            throw new NotFound(userNotFoundMessage);
-          })
-          .then((user) => {
-            if (!user) {
-              throw new BadRequest(badRequestMessage);
-            }
-            res.send({ data: user });
-          })
-          .catch((err) => { next(err); });
+  User.findByIdAndUpdate(userId, { name, email }, { new: true, runValidators: true })
+    .orFail(() => {
+      throw new NotFound(userNotFoundMessage);
+    })
+    .then((user) => {
+      if (!user) {
+        throw new BadRequest(badRequestMessage);
       }
+      res.send({ data: user });
     })
     .catch((err) => { next(err); });
 };
